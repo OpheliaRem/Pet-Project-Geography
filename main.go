@@ -16,6 +16,7 @@ var handlers = map[string]func(http.ResponseWriter, *http.Request){
 	"/v1/get-all-countries": country_controller.GetAll,
 	"/v1/remove-country":    country_controller.Remove,
 	"/v1/update-country":    country_controller.Update,
+	"/v1/save-town":         town_contoller.Save,
 	"/v1/get-all-towns":     town_contoller.GetAll,
 	"/v1/get-town-by-id":    town_contoller.GetById,
 }

@@ -7,35 +7,35 @@ import (
 	"backPet0/models"
 )
 
-func modelToDto(town models.Town) (town_dto.TownDto, error) {
+func modelToDtoForRead(town models.Town) (town_dto.TownDtoForRead, error) {
 	var countryName *string
 	if town.CountryId != nil {
 		var country models.Country
 		country, err := country_repo.GetById(*town.CountryId)
 		if err != nil {
-			return town_dto.TownDto{}, err
+			return town_dto.TownDtoForRead{}, err
 		}
 		countryName = &country.Name
 	} else {
 		countryName = nil
 	}
 
-	return town_dto.TownDto{
+	return town_dto.TownDtoForRead{
 		Name:             town.Name,
 		IsCountryCapital: town.IsCountryCapital,
 		CountryName:      countryName,
 	}, nil
 }
 
-func GetAll() ([]town_dto.TownDto, error) {
+func GetAll() ([]town_dto.TownDtoForRead, error) {
 	towns, err := town_repo.GetAll()
 	if err != nil {
 		return nil, err
 	}
 
-	res := make([]town_dto.TownDto, len(towns))
+	res := make([]town_dto.TownDtoForRead, len(towns))
 	for i := range towns {
-		res[i], err = modelToDto(towns[i])
+		res[i], err = modelToDtoForRead(towns[i])
 		if err != nil {
 			return nil, err
 		}
@@ -44,16 +44,25 @@ func GetAll() ([]town_dto.TownDto, error) {
 	return res, nil
 }
 
-func GetById(id int) (town_dto.TownDto, error) {
+func GetById(id int) (town_dto.TownDtoForRead, error) {
 	town, err := town_repo.GetById(id)
 	if err != nil {
-		return town_dto.TownDto{}, err
+		return town_dto.TownDtoForRead{}, err
 	}
 
-	dto, err := modelToDto(town)
+	dto, err := modelToDtoForRead(town)
 	if err != nil {
-		return town_dto.TownDto{}, err
+		return town_dto.TownDtoForRead{}, err
 	}
 
 	return dto, nil
+}
+
+func Save(dto town_dto.TownDtoForCreate) error {
+	return town_repo.Save(models.Town{
+		Id:               0,
+		Name:             dto.Name,
+		IsCountryCapital: dto.IsCountryCapital,
+		CountryId:        dto.CountryId,
+	})
 }
