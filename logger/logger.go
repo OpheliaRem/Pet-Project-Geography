@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"fmt"
 	"os"
 )
 
@@ -10,8 +11,8 @@ func AddFileStream(file *os.File) {
 	fStreams = append(fStreams, file)
 }
 
-func Log(m string) {
+func Log(m any) {
 	for _, stream := range fStreams {
-		stream.Write([]byte(m + "\n"))
+		fmt.Fprintln(stream, m)
 	}
 }
